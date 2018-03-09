@@ -1,0 +1,34 @@
+{
+    "devs": [
+        {
+            "id": "00001",
+            "name": "masterboard",
+            "relays": [
+                {
+                    "pin": "23",
+                    "name": "gpio23",
+                    "interval": "30",
+                    "duration": "5"
+                }
+            ]
+        },
+        {
+            "id": "00002",
+            "name": "slaveboard",
+            "relays": [
+                {
+                    "pin": "23",
+                    "name": "gpio23",
+                    "interval": "30",
+                    "duration": "5"
+                },
+                {
+                    "pin": "24",
+                    "name": "gpio24",
+                    "interval": "30",
+                    "duration": "5"
+                }
+            ]
+        }
+    ]
+}
