@@ -22,9 +22,17 @@ def onConfigResponse(clnt, userdata, msg):
 def getMQTTConfig():
 	print("Config not found. Requesting from MQTT.")
 	client = setupMQTTClient("masterboard")
-	client.subscribe('sun-chaser/config/response/masterboard', qos=2)
-	client.publish('sun-chaser/config/request', payload='masterboard', qos=2)
+	client.subscribe('sun-chaser/config/response/slaveboard', qos=2)
+	client.publish('sun-chaser/config/request', payload='slaveboard', qos=2)
 	time.sleep(2)
+
+def getConfig():
+	try:
+		mydict = json.load(open('myconfig.json'))
+	except IOError:
+		getMQTTConfig()
+		mydict = json.load(open('myconfig.json'))
+	return mydict
 
 if __name__ == "__main__":
 	try:
