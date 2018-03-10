@@ -3,7 +3,6 @@ import RPi.GPIO as GPIO
 import paho.mqtt.client as mqtt
 from threading import Event, Thread
 import config
-import json
 
 def call_repeatedly(interval, func, offset, *args):
     stopped = Event()
@@ -37,6 +36,11 @@ def mqtt_message(client, userdata, message):
         relay['interval'] = str(interval)
     if 'control' in str(message.topic):
         reset_timer(interval, duration, relay)
+    saveConfig()
+
+def saveConfig():
+    print(myconfig)
+    config.setConfig(myconfig)
 
 def getRelayFromTopic(topic):
     for relay in myconfig['relays']:
@@ -45,15 +49,15 @@ def getRelayFromTopic(topic):
     return None
 
 def reset_timer(interval, duration, relay):
-    relay['cfc']()
+    cfcs[relay['name']]()
     time.sleep(1)
-    relay['cfc'] = call_repeatedly(interval, pulse, duration, relay)
+    cfcs[relay['name']] = call_repeatedly(interval, pulse, duration, relay)
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 #GPIO.setup(relay, GPIO.OUT)
 
-myconfig = json.loads(config.getConfig())
+myconfig = config.getConfig()
 print(myconfig)
 
 client = mqtt.Client()
@@ -62,12 +66,14 @@ client.on_message = mqtt_message
 client.loop_start()
 client.subscribe('sun-chaser/control/{}/#'.format(myconfig['name']), qos=2)
 
+cfcs = {}
+
 # Start Threads
 for relay in myconfig['relays']:
     GPIO.setup(int(relay['pin']), GPIO.OUT)
     interval = int(relay["interval"])
     duration = int(relay['duration'])
-    relay['cfc'] = call_repeatedly(interval, pulse, duration, relay)
+    cfcs[relay['name']] = call_repeatedly(interval, pulse, duration, relay)
 
 try:
     while True:
@@ -76,5 +82,5 @@ except KeyboardInterrupt:
     print("Cleaning and Exiting.")
     client.disconnect()
     client.loop_stop()
-    for relay in myconfig['relays']:
-        relay['cfc']()
+    for relay in cfcs.values():
+        relay()

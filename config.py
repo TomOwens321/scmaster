@@ -17,7 +17,7 @@ def onConfigResponse(clnt, userdata, msg):
 	print("Config received.")
 	mydict = json.loads(msg.payload)
 	with open('myconfig.json','w') as f:
-		json.dump(msg.payload, f)
+		json.dump(mydict, f)
 
 def getMQTTConfig():
 	print("Config not found. Requesting from MQTT.")
@@ -28,15 +28,22 @@ def getMQTTConfig():
 
 def getConfig():
 	try:
-		mydict = json.load(open('myconfig.json'))
+		with open('myconfig.json','r') as f:
+			mydict = json.load(f)
 	except IOError:
 		getMQTTConfig()
-		mydict = json.load(open('myconfig.json'))
+		with open('myconfig.json','r') as f:
+			mydict = json.load(f)
 	return mydict
+
+def setConfig(myconfig):
+	with open('myconfig.json','w') as f:
+		json.dump(myconfig, f)
 
 if __name__ == "__main__":
 	try:
-		mydict = json.load(open('myconfig.json'))
+		with open('myconfig.json','r') as f:
+			mydict = json.load(f)
 	except IOError:
 		getMQTTConfig()
 	print( mydict )
