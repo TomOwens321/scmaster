@@ -16,9 +16,9 @@ def pulse(relay):
     pin = int(relay['pin'])
     ontime = int(relay['duration'])
     print("Watering {} for {} seconds.".format(relay['name'],ontime))
-    GPIO.output(pin, GPIO.HIGH)
-    time.sleep(ontime)
     GPIO.output(pin, GPIO.LOW)
+    time.sleep(ontime)
+    GPIO.output(pin, GPIO.HIGH)
     print("Finished watering {}.".format(relay['name']))
 
 def mqtt_message(client, userdata, message):
@@ -71,6 +71,7 @@ cfcs = {}
 # Start Threads
 for relay in myconfig['relays']:
     GPIO.setup(int(relay['pin']), GPIO.OUT)
+    GPIO.output(int(relay['pin'], GPIO.HIGH))
     interval = int(relay["interval"])
     duration = int(relay['duration'])
     cfcs[relay['name']] = call_repeatedly(interval, pulse, duration, relay)
