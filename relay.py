@@ -71,7 +71,7 @@ cfcs = {}
 # Start Threads
 for relay in myconfig['relays']:
     GPIO.setup(int(relay['pin']), GPIO.OUT)
-    GPIO.output(int(relay['pin'], GPIO.HIGH))
+    GPIO.output(int(relay['pin']), GPIO.HIGH))
     interval = int(relay["interval"])
     duration = int(relay['duration'])
     cfcs[relay['name']] = call_repeatedly(interval, pulse, duration, relay)
