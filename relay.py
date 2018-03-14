@@ -24,6 +24,9 @@ def pulse(relay):
 def mqtt_message(client, userdata, message):
     print("MQTT Message Received.")
     relay = getRelayFromTopic(message.topic)
+    if relay == None:
+        print("Relay not found in {}".format(message.topic))
+        return
     duration = int(relay['duration'])
     interval = int(relay['interval'])
     if 'duration' in str(message.topic):
@@ -34,6 +37,9 @@ def mqtt_message(client, userdata, message):
         interval = int(message.payload)
         print("Setting {} Interval to: {}".format(relay['name'],interval))
         relay['interval'] = str(interval)
+    if 'now' in str(message.topic):
+        print("Someone pressed The Button for {}.".format(relay['name']))
+        pulse(relay)
     if 'control' in str(message.topic):
         reset_timer(interval, duration, relay)
     saveConfig()
