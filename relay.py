@@ -78,6 +78,7 @@ client.connect('picloud.ourhouse')
 client.on_message = mqtt_message
 client.loop_start()
 client.subscribe('sun-chaser/control/{}/#'.format(myconfig['name']), qos=2)
+client.subscribe('sun-chaser/config/{}'.format(myconfig['name']), qos=1)
 
 cfcs = {}
 
