@@ -39,6 +39,10 @@ def mqtt_message(client, userdata, message):
         interval = int(message.payload)
         print("Setting {} Interval to: {}".format(relay['name'],interval))
         relay['interval'] = str(interval)
+    if 'moisture' in str(message.topic):
+        moisture = int(message.payload)
+        print("Setting {} Moisture to: {}".format(relay['name'],moisture))
+        relay['moisture'] = str(moisture)
     if 'now' in str(message.topic):
         print("Someone pressed The Button for {}.".format(relay['name']))
         pulse(relay)
@@ -53,7 +57,7 @@ def newMQTTConfig(message):
         with open('myconfig.json', 'w') as f:
             f.write(message.payload)
             f.close()
-            myconfig = config.getConfig()
+        myconfig = config.getConfig()
 
 def saveConfig():
     print(myconfig)
