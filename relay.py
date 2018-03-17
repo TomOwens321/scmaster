@@ -70,6 +70,7 @@ def getRelayFromTopic(topic):
     return None
 
 def reset_timer(interval, duration, relay):
+    global cfcs
     cfcs[relay['name']]()
     time.sleep(1)
     cfcs[relay['name']] = call_repeatedly(interval, pulse, duration, relay)
