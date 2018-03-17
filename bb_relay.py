@@ -7,7 +7,7 @@ import config
 def call_repeatedly(interval, func, offset, *args):
     stopped = Event()
     def loop():
-        while not stopped.wait(interval - offset): # the first call is in `interval` secs
+        while not stopped.wait((interval * 60) - offset):
             func(*args)
     Thread(target=loop).start()    
     return stopped.set
@@ -22,10 +22,12 @@ def pulse(relay):
     print("Finished watering {}.".format(relay['name']))
 
 def mqtt_message(client, userdata, message):
+    if ('config' in message.topic):
+        newMQTTConfig(message)
     print("MQTT Message Received.")
     relay = getRelayFromTopic(message.topic)
     if relay == None:
-        print("Cannot find device in {}.".format(message.topic))
+        print("Relay not found in {}".format(message.topic))
         return
     duration = int(relay['duration'])
     interval = int(relay['interval'])
@@ -37,9 +39,25 @@ def mqtt_message(client, userdata, message):
         interval = int(message.payload)
         print("Setting {} Interval to: {}".format(relay['name'],interval))
         relay['interval'] = str(interval)
+    if 'moisture' in str(message.topic):
+        moisture = int(message.payload)
+        print("Setting {} Moisture to: {}".format(relay['name'],moisture))
+        relay['moisture'] = str(moisture)
+    if 'now' in str(message.topic):
+        print("Someone pressed The Button for {}.".format(relay['name']))
+        pulse(relay)
     if 'control' in str(message.topic):
         reset_timer(interval, duration, relay)
     saveConfig()
+
+def newMQTTConfig(message):
+    global myconfig
+    if (myconfig['name'] in message.topic):
+        print("Saving new configuration.")
+        with open('myconfig.json', 'w') as f:
+            f.write(message.payload)
+            f.close()
+        myconfig = config.getConfig()
 
 def saveConfig():
     print(myconfig)
@@ -52,6 +70,7 @@ def getRelayFromTopic(topic):
     return None
 
 def reset_timer(interval, duration, relay):
+    global cfcs
     cfcs[relay['name']]()
     time.sleep(1)
     cfcs[relay['name']] = call_repeatedly(interval, pulse, duration, relay)
@@ -66,6 +85,7 @@ client.connect('picloud.ourhouse')
 client.on_message = mqtt_message
 client.loop_start()
 client.subscribe('sun-chaser/control/{}/#'.format(myconfig['name']), qos=2)
+client.subscribe('sun-chaser/config/{}'.format(myconfig['name']), qos=1)
 
 cfcs = {}
 
