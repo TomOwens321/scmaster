@@ -8,7 +8,8 @@
                     "pin": "23",
                     "name": "gpio23",
                     "interval": "30",
-                    "duration": "5"
+                    "duration": "5",
+                    "moisture": "270"
                 }
             ]
         },
@@ -19,14 +20,22 @@
                 {
                     "pin": "23",
                     "name": "gpio23",
-                    "interval": "30",
-                    "duration": "5"
-                },
+                    "interval": "35",
+                    "duration": "8",
+                    "moisture": "270"
+                }
+            ]
+        },
+        {
+            "id": "00003",
+            "name": "bathroom",
+            "relays": [
                 {
-                    "pin": "24",
-                    "name": "gpio24",
-                    "interval": "20",
-                    "duration": "8"
+                    "pin": "23",
+                    "name": "gpio23",
+                    "interval": "12",
+                    "duration": "16",
+                    "moisture": "270"
                 }
             ]
         }

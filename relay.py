@@ -22,6 +22,8 @@ def pulse(relay):
     print("Finished watering {}.".format(relay['name']))
 
 def mqtt_message(client, userdata, message):
+    if ('config' in message.topic):
+        newMQTTConfig(message)
     print("MQTT Message Received.")
     relay = getRelayFromTopic(message.topic)
     if relay == None:
@@ -43,6 +45,11 @@ def mqtt_message(client, userdata, message):
     if 'control' in str(message.topic):
         reset_timer(interval, duration, relay)
     saveConfig()
+
+def newMQTTConfig(message):
+    if (myconfig['name'] in message.topic):
+        print("Saving new configuration.")
+        config.setConfig(message.payload)
 
 def saveConfig():
     print(myconfig)
