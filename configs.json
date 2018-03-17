@@ -18,8 +18,8 @@
             "name": "slaveboard",
             "relays": [
                 {
-                    "pin": "23",
-                    "name": "gpio23",
+                    "pin": "P9_11",
+                    "name": "arctoWater",
                     "interval": "35",
                     "duration": "8",
                     "moisture": "270"
