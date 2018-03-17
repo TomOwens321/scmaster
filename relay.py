@@ -7,7 +7,7 @@ import config
 def call_repeatedly(interval, func, offset, *args):
     stopped = Event()
     def loop():
-        while not stopped.wait((interval * 60) - (offset * 60)):
+        while not stopped.wait(interval - offset):
             func(*args)
     Thread(target=loop).start()    
     return stopped.set
@@ -90,7 +90,7 @@ cfcs = {}
 for relay in myconfig['relays']:
     GPIO.setup(int(relay['pin']), GPIO.OUT)
     GPIO.output(int(relay['pin']), GPIO.HIGH)
-    interval = int(relay["interval"])
+    interval = int(relay["interval"]) * 60
     duration = int(relay['duration'])
     cfcs[relay['name']] = call_repeatedly(interval, pulse, duration, relay)
 
