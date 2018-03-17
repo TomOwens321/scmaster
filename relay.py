@@ -47,6 +47,7 @@ def mqtt_message(client, userdata, message):
     saveConfig()
 
 def newMQTTConfig(message):
+    global myconfig
     if (myconfig['name'] in message.topic):
         print("Saving new configuration.")
         with open('myconfig.json', 'w') as f:
