@@ -7,7 +7,7 @@ import config
 def call_repeatedly(interval, func, offset, *args):
     stopped = Event()
     def loop():
-        while not stopped.wait(interval - offset): # the first call is in `interval` secs
+        while not stopped.wait((interval * 60) - (offset * 60)):
             func(*args)
     Thread(target=loop).start()    
     return stopped.set
