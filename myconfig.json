@@ -1,1 +1,1 @@
-{"relays": [{"duration": "22", "moisture": 131, "interval": 30, "name": "gpio23", "pin": "23"}], "id": "00002", "name": "slaveboard"}
+{"relays": [{"duration": "300", "moisture": 131, "interval": 30, "name": "gpio23", "pin": "23"}], "id": "00002", "name": "bathroom"}
