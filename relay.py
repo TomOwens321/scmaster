@@ -15,11 +15,11 @@ def call_repeatedly(interval, func, offset, *args):
 def pulse(relay):
     pin = int(relay['pin'])
     ontime = int(relay['duration'])
-    print("Watering {} for {} seconds.".format(relay['name'],ontime))
+    print("[{}] Watering {} for {} seconds.".format(time.asctime(),relay['name'],ontime))
     GPIO.output(pin, GPIO.LOW)
     time.sleep(ontime)
     GPIO.output(pin, GPIO.HIGH)
-    print("Finished watering {}.".format(relay['name']))
+    print("[{}] Finished watering {}.".format(time.asctime(),relay['name']))
 
 def mqtt_message(client, userdata, message):
     if ('config' in message.topic):
