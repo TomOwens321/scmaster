@@ -15,36 +15,45 @@ def call_repeatedly(interval, func, offset, *args):
 def pulse(relay):
     pin = int(relay['pin'])
     ontime = int(relay['duration'])
-    print("[{}] Watering {} for {} seconds.".format(time.asctime(),relay['name'],ontime))
+    mqtt_log("Watering {} for {} seconds.".format(relay['name'],ontime))
     GPIO.output(pin, GPIO.LOW)
     time.sleep(ontime)
     GPIO.output(pin, GPIO.HIGH)
-    print("[{}] Finished watering {}.".format(time.asctime(),relay['name']))
+    mqtt_log("Finished watering {}.".format(relay['name']))
+
+def mqtt_log(message):
+    topic = "sun-chaser/logs/relay"
+    payload = "[{}] Relay : {}".format(time.asctime(), message)
+    logclient = mqtt.Client('Relay')
+    logclient.connect('picloud.ourhouse')
+    logclient.publish(topic, payload=payload, qos=0, retain=False)
+    logclient.disconnect()
+    print(payload)
 
 def mqtt_message(client, userdata, message):
     if ('config' in message.topic):
         newMQTTConfig(message)
-    print("MQTT Message Received.")
+    mqtt_log("MQTT Message Received.")
     relay = getRelayFromTopic(message.topic)
     if relay == None:
-        print("Relay not found in {}".format(message.topic))
+        mqtt_log("Relay not found in {}".format(message.topic))
         return
     duration = int(relay['duration'])
     interval = int(relay['interval'])
     if 'duration' in str(message.topic):
         duration = int(message.payload)
-        print("Setting {} Duration to: {}".format(relay['name'],duration))
+        mqtt_log("Setting {} Duration to: {}".format(relay['name'],duration))
         relay['duration'] = str(duration)
     if 'interval' in str(message.topic):
         interval = int(message.payload)
-        print("Setting {} Interval to: {}".format(relay['name'],interval))
+        mqtt_log("Setting {} Interval to: {}".format(relay['name'],interval))
         relay['interval'] = str(interval)
     if 'moisture' in str(message.topic):
         moisture = int(message.payload)
-        print("Setting {} Moisture to: {}".format(relay['name'],moisture))
+        mqtt_log("Setting {} Moisture to: {}".format(relay['name'],moisture))
         relay['moisture'] = str(moisture)
     if 'now' in str(message.topic):
-        print("Someone pressed The Button for {}.".format(relay['name']))
+        mqtt_log("Someone pressed The Button for {}.".format(relay['name']))
         pulse(relay)
     if 'control' in str(message.topic):
         reset_timer(interval, duration, relay)
@@ -53,14 +62,14 @@ def mqtt_message(client, userdata, message):
 def newMQTTConfig(message):
     global myconfig
     if (myconfig['name'] in message.topic):
-        print("Saving new configuration.")
+        mqtt_log("Saving new configuration.")
         with open('myconfig.json', 'w') as f:
             f.write(message.payload)
             f.close()
         myconfig = config.getConfig()
 
 def saveConfig():
-    print(myconfig)
+    mqtt_log(myconfig)
     config.setConfig(myconfig)
 
 def getRelayFromTopic(topic):
@@ -80,7 +89,7 @@ GPIO.setwarnings(False)
 #GPIO.setup(relay, GPIO.OUT)
 
 myconfig = config.getConfig()
-print(myconfig)
+mqtt_log(myconfig)
 
 client = mqtt.Client()
 client.connect('picloud.ourhouse')
