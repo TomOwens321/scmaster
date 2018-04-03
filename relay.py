@@ -1,5 +1,5 @@
 import time
-# import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 import paho.mqtt.client as mqtt
 from threading import Event, Thread
 import config
@@ -16,9 +16,9 @@ def pulse(relay):
     pin = int(relay['pin'])
     ontime = int(relay['duration'])
     mqtt_log("Watering {} for {} seconds.".format(relay['name'],ontime))
-#    GPIO.output(pin, GPIO.LOW)
+    GPIO.output(pin, GPIO.LOW)
     time.sleep(ontime)
-#    GPIO.output(pin, GPIO.HIGH)
+    GPIO.output(pin, GPIO.HIGH)
     mqtt_log("Finished watering {}.".format(relay['name']))
     mqtt_status(relay)
 
@@ -98,8 +98,8 @@ def reset_timer(interval, duration, relay):
     time.sleep(1)
     cfcs[relay['name']] = call_repeatedly(interval, pulse, duration, relay)
 
-# GPIO.setmode(GPIO.BCM)
-# GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
 # GPIO.setup(relay, GPIO.OUT)
 
 myconfig = config.getConfig()
@@ -116,8 +116,8 @@ cfcs = {}
 
 # Start Threads
 for relay in myconfig['relays']:
-#    GPIO.setup(int(relay['pin']), GPIO.OUT)
-#    GPIO.output(int(relay['pin']), GPIO.HIGH)
+    GPIO.setup(int(relay['pin']), GPIO.OUT)
+    GPIO.output(int(relay['pin']), GPIO.HIGH)
     interval = int(relay["interval"])
     duration = int(relay['duration'])
     cfcs[relay['name']] = call_repeatedly(interval, pulse, duration, relay)
