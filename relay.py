@@ -121,6 +121,7 @@ for relay in myconfig['relays']:
     interval = int(relay["interval"])
     duration = int(relay['duration'])
     cfcs[relay['name']] = call_repeatedly(interval, pulse, duration, relay)
+    mqtt_status(relay)
 
 try:
     while True:
