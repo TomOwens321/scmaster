@@ -105,7 +105,7 @@ GPIO.setwarnings(False)
 myconfig = config.getConfig()
 
 client = mqtt.Client(myconfig['name'])
-client.connect('picloud.ourhouse')
+client.connect('picloud.ourhouse', keepalive=300)
 client.on_message = mqtt_message
 client.loop_start()
 client.subscribe('sun-chaser/control/{}/#'.format(myconfig['name']), qos=1)
