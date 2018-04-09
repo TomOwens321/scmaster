@@ -25,10 +25,10 @@ def pulse(relay):
 def mqtt_log(message):
     topic = "sun-chaser/logs/relay"
     payload = "[{}] Relay : {}".format(time.asctime(), message)
-    logclient = mqtt.Client('Relay')
-    logclient.connect('picloud.ourhouse')
+    logclient = client
+    # logclient.connect('picloud.ourhouse')
     logclient.publish(topic, payload=payload, qos=0, retain=False)
-    logclient.disconnect()
+    # logclient.disconnect()
     print(payload)
 
 def mqtt_status(relay):
@@ -37,10 +37,10 @@ def mqtt_status(relay):
     message = ("{}".format(time.ctime(nexttime)))
     topic = "sun-chaser/status/relay/{}/next".format(relay['name'])
     payload = "{}".format(message)
-    logclient = mqtt.Client('Relay')
-    logclient.connect('picloud.ourhouse')
+    logclient = client
+    # logclient.connect('picloud.ourhouse')
     logclient.publish(topic, payload=payload, qos=0, retain=False)
-    logclient.disconnect()
+    # logclient.disconnect()
     print(payload)
 
 def mqtt_message(client, userdata, message):
@@ -103,7 +103,6 @@ GPIO.setwarnings(False)
 # GPIO.setup(relay, GPIO.OUT)
 
 myconfig = config.getConfig()
-mqtt_log(myconfig)
 
 client = mqtt.Client()
 client.connect('picloud.ourhouse')
@@ -111,6 +110,8 @@ client.on_message = mqtt_message
 client.loop_start()
 client.subscribe('sun-chaser/control/{}/#'.format(myconfig['name']), qos=1)
 client.subscribe('sun-chaser/config/{}'.format(myconfig['name']), qos=1)
+
+mqtt_log(myconfig)
 
 cfcs = {}
 
