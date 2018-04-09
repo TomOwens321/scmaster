@@ -104,7 +104,7 @@ GPIO.setwarnings(False)
 
 myconfig = config.getConfig()
 
-client = mqtt.Client()
+client = mqtt.Client(myconfig['name'])
 client.connect('picloud.ourhouse')
 client.on_message = mqtt_message
 client.loop_start()
