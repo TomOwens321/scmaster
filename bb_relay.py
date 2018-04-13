@@ -1,5 +1,6 @@
 import time
 import Adafruit_BBIO.GPIO as GPIO
+import Adafruit_BBIO.ADC  as ADC
 import paho.mqtt.client as mqtt
 from threading import Event, Thread
 import config
@@ -15,11 +16,29 @@ def call_repeatedly(interval, func, offset, *args):
 def pulse(relay):
     pin = relay['pin']
     ontime = int(relay['duration'])
-    print("Watering {} for {} seconds.".format(relay['name'],ontime))
+    mqtt_log("Watering {} for {} seconds.".format(relay['name'],ontime))
     GPIO.output(pin, GPIO.LOW)
     time.sleep(ontime)
     GPIO.output(pin, GPIO.HIGH)
-    print("Finished watering {}.".format(relay['name']))
+    mqtt_log("Finished watering {}.".format(relay['name']))
+    mqtt_status(relay)
+
+def mqtt_log(message):
+    topic = "sun-chaser/logs/relay"
+    payload = "[{}] Relay : {}".format(time.asctime(), message)
+    logclient = client
+    logclient.publish(topic, payload=payload, qos=0, retain=False)
+    print(payload)
+
+def mqtt_status(relay):
+    currenttime = int(time.time())
+    nexttime = (currenttime - int(relay['duration'])) + (int(relay['interval']) * 60)
+    message = ("{}".format(time.ctime(nexttime)))
+    topic = "sun-chaser/status/relay/{}/next".format(relay['name'])
+    payload = "{}".format(message)
+    logclient = client
+    logclient.publish(topic, payload=payload, qos=0, retain=False)
+    print(payload)
 
 def mqtt_message(client, userdata, message):
     if ('config' in message.topic):
@@ -75,7 +94,18 @@ def reset_timer(interval, duration, relay):
     time.sleep(1)
     cfcs[relay['name']] = call_repeatedly(interval, pulse, duration, relay)
 
+def checkMoisture():
+    for relay in myconfig['relays']:
+        moist = int( ADC.read(relay['senspin']) * 1000 )
+        if (moist < int( relay['moisture'] )):
+            mqtt_log("Zone {} moisture is below the threshold.".format(relay['name']))
+            pulse(relay)
+        else:
+            mqtt_log("Zone {} moisture: {}".format(relay['name'], moist))
+        
 #GPIO.setup(relay, GPIO.OUT)
+
+ADC.setup()
 
 myconfig = config.getConfig()
 print(myconfig)
@@ -91,6 +121,7 @@ cfcs = {}
 
 # Start Threads
 for relay in myconfig['relays']:
+    print("Setting up {}".format(relay['name']))
     GPIO.setup(relay['pin'], GPIO.OUT)
     GPIO.output(relay['pin'], GPIO.HIGH)
     interval = int(relay["interval"])
@@ -99,7 +130,8 @@ for relay in myconfig['relays']:
 
 try:
     while True:
-        time.sleep(5)
+        checkMoisture()
+        time.sleep(600)
 except KeyboardInterrupt:
     print("Cleaning and Exiting.")
     client.disconnect()

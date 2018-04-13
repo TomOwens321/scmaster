@@ -38,7 +38,7 @@ def getConfig():
 
 def setConfig(myconfig):
 	with open('myconfig.json','w') as f:
-		json.dump(myconfig, f)
+		json.dump(myconfig, f, indent=4)
 
 if __name__ == "__main__":
 	try:

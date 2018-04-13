@@ -1,1 +1,38 @@
-{"relays": [{"duration": "120", "moisture": "270", "interval": "120", "name": "gpio23", "pin": "23"}], "id": "00003", "name": "bathroom"}
+{
+    "relays": [
+        {
+            "name": "Water1", 
+            "pin": "P8_34", 
+            "interval": "3", 
+            "moisture": "27", 
+            "duration": "5", 
+            "senspin": "P9_33"
+        }, 
+        {
+            "name": "Water2", 
+            "pin": "P8_36", 
+            "interval": "7", 
+            "moisture": "270", 
+            "duration": "6", 
+            "senspin": "P9_35"
+        }, 
+        {
+            "name": "Water3", 
+            "pin": "P8_38", 
+            "interval": "5", 
+            "moisture": "280", 
+            "duration": "7", 
+            "senspin": "P9_37"
+        }, 
+        {
+            "name": "Water4", 
+            "pin": "P8_40", 
+            "interval": "11", 
+            "moisture": "290", 
+            "duration": "8", 
+            "senspin": "P9_39"
+        }
+    ], 
+    "id": "00002", 
+    "name": "beaglebone"
+}
