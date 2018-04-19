@@ -2,15 +2,15 @@
     "relays": [
         {
             "name": "Water1", 
-            "pin": "P8_34", 
-            "interval": "3", 
+            "pin": "P9_23", 
+            "interval": "3.5", 
             "moisture": "27", 
             "duration": "5", 
             "senspin": "P9_33"
         }, 
         {
             "name": "Water2", 
-            "pin": "P8_36", 
+            "pin": "P9_25", 
             "interval": "7", 
             "moisture": "270", 
             "duration": "6", 
@@ -18,7 +18,7 @@
         }, 
         {
             "name": "Water3", 
-            "pin": "P8_38", 
+            "pin": "P9_27", 
             "interval": "5", 
             "moisture": "280", 
             "duration": "7", 
@@ -26,10 +26,10 @@
         }, 
         {
             "name": "Water4", 
-            "pin": "P8_40", 
+            "pin": "P9_29", 
             "interval": "11", 
             "moisture": "290", 
-            "duration": "8", 
+            "duration": "4.7", 
             "senspin": "P9_39"
         }
     ], 

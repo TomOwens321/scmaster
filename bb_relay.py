@@ -15,7 +15,7 @@ def call_repeatedly(interval, func, offset, *args):
 
 def pulse(relay):
     pin = relay['pin']
-    ontime = int(relay['duration'])
+    ontime = float(relay['duration'])
     mqtt_log("Watering {} for {} seconds.".format(relay['name'],ontime))
     GPIO.output(pin, GPIO.LOW)
     time.sleep(ontime)
@@ -24,21 +24,22 @@ def pulse(relay):
     mqtt_status(relay)
 
 def mqtt_log(message):
-    topic = "sun-chaser/logs/relay"
+    topic = "sun-chaser/logs/relay/{}".format(myconfig['name'])
     payload = "[{}] Relay : {}".format(time.asctime(), message)
     logclient = client
     logclient.publish(topic, payload=payload, qos=0, retain=False)
     print(payload)
 
 def mqtt_status(relay):
-    currenttime = int(time.time())
-    nexttime = (currenttime - int(relay['duration'])) + (int(relay['interval']) * 60)
+    currenttime = float(time.time())
+    nexttime = (currenttime - float(relay['duration'])) + (float(relay['interval']) * 60)
     message = ("{}".format(time.ctime(nexttime)))
-    topic = "sun-chaser/status/relay/{}/next".format(relay['name'])
+    topic = "sun-chaser/status/relay/{}/{}/next".format(myconfig['name'], relay['name'])
     payload = "{}".format(message)
     logclient = client
     logclient.publish(topic, payload=payload, qos=0, retain=False)
     print(payload)
+    print("+----------------------------------------------------+")
 
 def mqtt_message(client, userdata, message):
     if ('config' in message.topic):
@@ -48,18 +49,18 @@ def mqtt_message(client, userdata, message):
     if relay == None:
         print("Relay not found in {}".format(message.topic))
         return
-    duration = int(relay['duration'])
-    interval = int(relay['interval'])
+    duration = float(relay['duration'])
+    interval = float(relay['interval'])
     if 'duration' in str(message.topic):
-        duration = int(message.payload)
+        duration = float(message.payload)
         print("Setting {} Duration to: {}".format(relay['name'],duration))
         relay['duration'] = str(duration)
     if 'interval' in str(message.topic):
-        interval = int(message.payload)
+        interval = float(message.payload)
         print("Setting {} Interval to: {}".format(relay['name'],interval))
         relay['interval'] = str(interval)
     if 'moisture' in str(message.topic):
-        moisture = int(message.payload)
+        moisture = float(message.payload)
         print("Setting {} Moisture to: {}".format(relay['name'],moisture))
         relay['moisture'] = str(moisture)
     if 'now' in str(message.topic):
@@ -124,8 +125,8 @@ for relay in myconfig['relays']:
     print("Setting up {}".format(relay['name']))
     GPIO.setup(relay['pin'], GPIO.OUT)
     GPIO.output(relay['pin'], GPIO.HIGH)
-    interval = int(relay["interval"])
-    duration = int(relay['duration'])
+    interval = float(relay["interval"])
+    duration = float(relay['duration'])
     cfcs[relay['name']] = call_repeatedly(interval, pulse, duration, relay)
 
 try:

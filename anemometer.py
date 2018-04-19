@@ -30,7 +30,11 @@ def proc_stats():
 def print_stats():
     topic = 'sun-chaser/weather/wind'
     logclient = client
-    logclient.publish(topic, payload=json.dumps(stats), qos=0, retain=False)
+    try:
+        logclient.publish(topic, payload=json.dumps(stats), qos=0, retain=False)
+    except:
+        print("Error publishing to MQTT. Attempting to reconnect.")
+        logclient.reconnect()
     print( stats )
 
 GPIO.setup(anemPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
