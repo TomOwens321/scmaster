@@ -1,1 +1,5 @@
+<<<<<<< Updated upstream
 {"relays": [{"duration": "10", "pin": "23", "interval": "47", "name": "gpiopin23", "moisture": "270"}, {"duration": "6", "pin": "24", "interval": "26", "name": "gpiopin24", "moisture": "500"}], "id": "00003", "name": "testing"}
+=======
+{"relays": [{"duration": "10", "pin": "23", "interval": "47", "name": "gpiopin23", "moisture": "270"}, {"duration": "6", "pin": "24", "interval": "26", "name": "gpiopin24", "moisture": "500"}], "id": "00003", "name": "testing"}
+>>>>>>> Stashed changes
