@@ -1,5 +1,38 @@
-<<<<<<< Updated upstream
-{"relays": [{"duration": "10", "pin": "23", "interval": "47", "name": "gpiopin23", "moisture": "270"}, {"duration": "6", "pin": "24", "interval": "26", "name": "gpiopin24", "moisture": "500"}], "id": "00003", "name": "testing"}
-=======
-{"relays": [{"duration": "10", "pin": "23", "interval": "47", "name": "gpiopin23", "moisture": "270"}, {"duration": "6", "pin": "24", "interval": "26", "name": "gpiopin24", "moisture": "500"}], "id": "00003", "name": "testing"}
->>>>>>> Stashed changes
+{
+    "relays": [
+        {
+            "name": "Water1", 
+            "pin": "P9_23", 
+            "interval": "3.5", 
+            "moisture": "27", 
+            "duration": "5", 
+            "senspin": "P9_33"
+        }, 
+        {
+            "name": "Water2", 
+            "pin": "P9_25", 
+            "interval": "7", 
+            "moisture": "270", 
+            "duration": "6", 
+            "senspin": "P9_35"
+        }, 
+        {
+            "name": "Water3", 
+            "pin": "P9_27", 
+            "interval": "5", 
+            "moisture": "280", 
+            "duration": "7", 
+            "senspin": "P9_37"
+        }, 
+        {
+            "name": "Water4", 
+            "pin": "P9_29", 
+            "interval": "11", 
+            "moisture": "290", 
+            "duration": "4.7", 
+            "senspin": "P9_39"
+        }
+    ], 
+    "id": "00002", 
+    "name": "beaglebone"
+}
