@@ -37,12 +37,13 @@ def proc_stats():
     ws  = rps * 1.492
     stats['currentspeed'] = float( str("%.1f" % ws) )
     stats['currenttime'] = currTime
-    if (ws > stats['maxws']):
-        stats['maxws'] = float( str("%.1f" % ws) )
-        # stats['maxrpm'] = rps * 60
-        stats['maxtime'] = currTime
     direction = ADC.read(dirPin) * 3.3
     stats['direction'] = direction_text(direction)
+    if (ws > stats['maxws']):
+        stats['maxws'] = float( str("%.1f" % ws) )
+        stats['maxtime'] = currTime
+        stats['maxdir'] = stats['direction']
+
 
 def print_stats():
     global stats
