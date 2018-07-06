@@ -8,6 +8,6 @@ node ('jslave') {
     }
 
     stage ('Test') {
-        sh './hello'
+        sh 'rm -f *.pyc'
     }
 }
