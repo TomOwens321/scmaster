@@ -13,7 +13,7 @@ last_time = time.time()
 def inc_counter(event):
     global counter
     counter = counter + 1.0
-    # gust_sensor()
+    gust_sensor()
     
 def reset_counter():
     global counter
@@ -21,13 +21,23 @@ def reset_counter():
     
 def gust_sensor():
     global last_time, stats
+    currTime = time.ctime()
     now_time = time.time()
     period = now_time - last_time
+    gust = ((1/period) * 1.492)
+    if (period < 0.008):
+        print("Period : {}").format(period)
+        print("Gust   : {}").format(gust)
+        return
+
     last_time = now_time
-    gust = ((1/period) * 1.492) / 1000
-    print(1/gust)
-    if gust > stats['gust']:
-        stats['gust'] = float( str("%.1f" % gust) )
+
+    if gust > stats['maxws']:
+        direction = ADC.read(dirPin) * 3.3
+        stats['direction'] = direction_text(direction)
+        stats['maxws'] = float( str("%.1f" % gust) )
+        stats['maxtime'] = currTime
+        stats['maxdir'] = stats['direction']
 
 
 def proc_stats():
