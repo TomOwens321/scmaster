@@ -13,7 +13,7 @@ last_time = time.time()
 def inc_counter(event):
     global counter
     counter = counter + 1.0
-    # gust_sensor()
+    gust_sensor()
     
 def reset_counter():
     global counter
@@ -21,13 +21,26 @@ def reset_counter():
     
 def gust_sensor():
     global last_time, stats
+    currTime = time.ctime()
     now_time = time.time()
     period = now_time - last_time
+    if (period == 0.0):
+        return
+    gust = ((1/period) * 1.492)
+    if (period < 0.01):
+        print("Period : {}").format(period)
+        print("Gust   : {}").format(gust)
+        return
+
     last_time = now_time
-    gust = ((1/period) * 1.492) / 1000
-    print(1/gust)
-    if gust > stats['gust']:
-        stats['gust'] = float( str("%.1f" % gust) )
+
+    stats['currentspeed'] = float( str("%.1f" % gust) )
+    if gust > stats['maxws']:
+        direction = ADC.read(dirPin) * 3.3
+        stats['direction'] = direction_text(direction)
+        stats['maxws'] = float( str("%.1f" % gust) )
+        stats['maxtime'] = currTime
+        stats['maxdir'] = stats['direction']
 
 
 def proc_stats():
@@ -35,14 +48,15 @@ def proc_stats():
     currTime = time.ctime()
     rps = counter / 10
     ws  = rps * 1.492
-    stats['currentspeed'] = float( str("%.1f" % ws) )
+    #stats['currentspeed'] = float( str("%.1f" % ws) )
     stats['currenttime'] = currTime
-    if (ws > stats['maxws']):
-        stats['maxws'] = float( str("%.1f" % ws) )
-        # stats['maxrpm'] = rps * 60
-        stats['maxtime'] = currTime
     direction = ADC.read(dirPin) * 3.3
     stats['direction'] = direction_text(direction)
+    #if (ws > stats['maxws']):
+    #    stats['maxws'] = float( str("%.1f" % ws) )
+    #    stats['maxtime'] = currTime
+    #    stats['maxdir'] = stats['direction']
+
 
 def print_stats():
     global stats
@@ -93,7 +107,7 @@ def direction_text( dir ):
     
 
 GPIO.setup(anemPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.add_event_detect(anemPin, GPIO.FALLING, callback=inc_counter, bouncetime=0)
+GPIO.add_event_detect(anemPin, GPIO.FALLING, callback=inc_counter, bouncetime=1)
 ADC.setup()
 
 client = mqtt.Client()
