@@ -9,5 +9,6 @@ node ('jslave') {
 
     stage ('Test') {
         sh 'rm -f *.pyc'
+        sh 'python relay.py'
     }
 }
